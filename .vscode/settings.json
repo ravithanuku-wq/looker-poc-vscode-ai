@@ -1,0 +1,6 @@
+{
+    "looker.instanceURL": "https://tigeranalyticsinc01.cloud.looker.com",
+    "looker.clientId": "xWwGTfPXTFrX7pQhpxYm",
+    "looker.mcpServerUrl": "https://tigeranalyticsinc01.cloud.looker.com/mcp"
+    "looker.projectId": "looker-poc-vscode-ai"
+}
