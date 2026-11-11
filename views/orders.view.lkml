@@ -3,12 +3,8 @@ view: orders {
   drill_fields: [order_id]
   suggestions: no
 
-  dimension: row_id {
-    primary_key: yes
-    type: number
-    sql: ${TABLE}.`Row ID` ;;
-  }
   dimension: order_id {
+    primary_key: yes
     type: string
     sql: ${TABLE}.`Order ID` ;;
   }
@@ -72,6 +68,10 @@ view: orders {
     type: string
     sql: ${TABLE}.Region ;;
   }
+  dimension: row_id {
+    type: number
+    sql: ${TABLE}.`Row ID` ;;
+  }
   dimension: sales {
     type: number
     sql: ${TABLE}.Sales ;;
@@ -80,7 +80,7 @@ view: orders {
     type: string
     sql: ${TABLE}.Segment ;;
   }
-  dimension_group: ship {
+  dimension_group: ship_date {
     type: time
     timeframes: [raw, date, week, month, quarter, year]
     convert_tz: no
@@ -108,6 +108,16 @@ view: orders {
     sql: ${order_id} ;;
     description: "Number of distinct orders, regardless of the number of product lines."
   }
+  measure: total_orders {
+    type: count_distinct
+    sql: ${order_id} ;;
+    description: "Number of distinct orders."
+  }
+  measure: total_customers {
+    type: count_distinct
+    sql: ${customer_id} ;;
+    description: "Number of distinct customers."
+  }
   measure: total_sales {
     type: sum
     sql: ${sales} ;;
@@ -119,6 +129,18 @@ view: orders {
     sql: ${profit} ;;
     value_format_name: usd
     description: "Total profit across order lines."
+  }
+  measure: profit_margin {
+    type: number
+    sql: 1.0 * ${total_profit} / NULLIF(${total_sales}, 0) ;;
+    value_format_name: percent_2
+    description: "Total profit divided by total sales."
+  }
+  measure: average_order_value {
+    type: number
+    sql: 1.0 * ${total_sales} / NULLIF(${total_orders}, 0) ;;
+    value_format_name: usd
+    description: "Total sales divided by distinct orders."
   }
   measure: total_quantity {
     type: sum
@@ -133,7 +155,7 @@ view: orders {
   }
   measure: return_rate {
     type: number
-    sql: 1.0 * ${returns.returned_order_count} / NULLIF(${order_count}, 0) ;;
+    sql: 1.0 * ${returns.returned_orders_count} / NULLIF(${total_orders}, 0) ;;
     value_format_name: percent_2
     description: "Returned orders as a share of distinct orders."
   }
