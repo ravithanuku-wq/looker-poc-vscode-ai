@@ -3,6 +3,7 @@ connection: "data-bricks"
 include: "/views/orders.view.lkml"
 include: "/views/people.view.lkml"
 include: "/views/returns.view.lkml"
+include: "/dashboards/superstore_stakeholder.dashboard.lookml"
 
 explore: orders {
   label: "Superstore Orders"
