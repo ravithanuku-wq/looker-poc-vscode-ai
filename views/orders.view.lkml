@@ -153,10 +153,4 @@ view: orders {
     value_format_name: percent_2
     description: "Average discount across order lines."
   }
-  measure: return_rate {
-    type: number
-    sql: 1.0 * ${returns.returned_orders_count} / NULLIF(${total_orders}, 0) ;;
-    value_format_name: percent_2
-    description: "Returned orders as a share of distinct orders."
-  }
 }
