@@ -3,8 +3,12 @@ view: orders {
   drill_fields: [order_id]
   suggestions: no
 
-  dimension: order_id {
+  dimension: row_id {
     primary_key: yes
+    type: number
+    sql: ${TABLE}.`Row ID` ;;
+  }
+  dimension: order_id {
     type: string
     sql: ${TABLE}.`Order ID` ;;
   }
@@ -68,10 +72,6 @@ view: orders {
     type: string
     sql: ${TABLE}.Region ;;
   }
-  dimension: row_id {
-    type: number
-    sql: ${TABLE}.`Row ID` ;;
-  }
   dimension: sales {
     type: number
     sql: ${TABLE}.Sales ;;
@@ -102,5 +102,39 @@ view: orders {
   measure: count {
     type: count
     drill_fields: [order_id, customer_name, product_name, returns.count]
+  }
+  measure: order_count {
+    type: count_distinct
+    sql: ${order_id} ;;
+    description: "Number of distinct orders, regardless of the number of product lines."
+  }
+  measure: total_sales {
+    type: sum
+    sql: ${sales} ;;
+    value_format_name: usd
+    description: "Total sales across order lines."
+  }
+  measure: total_profit {
+    type: sum
+    sql: ${profit} ;;
+    value_format_name: usd
+    description: "Total profit across order lines."
+  }
+  measure: total_quantity {
+    type: sum
+    sql: ${quantity} ;;
+    description: "Total quantity of products ordered."
+  }
+  measure: average_discount {
+    type: average
+    sql: ${discount} ;;
+    value_format_name: percent_2
+    description: "Average discount across order lines."
+  }
+  measure: return_rate {
+    type: number
+    sql: 1.0 * ${returns.returned_order_count} / NULLIF(${order_count}, 0) ;;
+    value_format_name: percent_2
+    description: "Returned orders as a share of distinct orders."
   }
 }
